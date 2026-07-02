@@ -1,0 +1,21 @@
+# Netlify configuration for PR Adventures.
+# The app lives at the root of the cybercoookie/aventurando repo, so the
+# Netlify site's "base directory" should be left empty (repo root).
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# SPA routing: send all paths to index.html so React Router handles them.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(self), camera=(self)"
