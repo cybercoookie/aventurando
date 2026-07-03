@@ -101,6 +101,7 @@ const STRINGS = {
     linkCopied: 'Link copied!',
     textMessage: 'Text message',
     close: 'Close',
+    allMunicipalities: 'All municipalities',
   },
   es: {
     map: 'Mapa',
@@ -202,6 +203,7 @@ const STRINGS = {
     linkCopied: '¡Enlace copiado!',
     textMessage: 'Mensaje de texto',
     close: 'Cerrar',
+    allMunicipalities: 'Todos los municipios',
   },
 }
 

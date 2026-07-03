@@ -13,12 +13,39 @@ export default function MapPage() {
   const wishlist = useWishlist()
   const { t, lang, pick } = useI18n()
   const [filter, setFilter] = useState(null)
+  const [municipality, setMunicipality] = useState(null)
   const [selected, setSelected] = useState(null)
 
-  const visible = useMemo(
-    () => (filter ? places.filter((p) => p.category === filter) : places),
-    [places, filter],
+  const municipalities = useMemo(
+    () =>
+      [...new Set(places.map((p) => p.municipality))].sort((a, b) =>
+        a.localeCompare(b, 'es'),
+      ),
+    [places],
   )
+
+  const visible = useMemo(
+    () =>
+      places.filter(
+        (p) =>
+          (!filter || p.category === filter) &&
+          (!municipality || p.municipality === municipality),
+      ),
+    [places, filter, municipality],
+  )
+
+  // Bounding box of the selected municipality's places, so the map zooms in.
+  const focusBounds = useMemo(() => {
+    if (!municipality) return null
+    const pts = places.filter((p) => p.municipality === municipality)
+    if (pts.length === 0) return null
+    const lngs = pts.map((p) => p.lng)
+    const lats = pts.map((p) => p.lat)
+    return [
+      [Math.min(...lngs), Math.min(...lats)],
+      [Math.max(...lngs), Math.max(...lats)],
+    ]
+  }, [places, municipality])
 
   async function handleDirections(place) {
     let origin = null
@@ -32,10 +59,34 @@ export default function MapPage() {
 
   return (
     <div className="relative h-full">
-      <MapView places={visible} selectedId={selected?.id} onSelect={setSelected} />
+      <MapView
+        places={visible}
+        selectedId={selected?.id}
+        onSelect={setSelected}
+        focusBounds={focusBounds}
+      />
 
-      {/* Category filter chips */}
+      {/* Category filter chips + municipality selector */}
       <div className="absolute top-3 left-0 right-12 flex gap-2 overflow-x-auto px-3 pb-1">
+        <select
+          value={municipality ?? ''}
+          onChange={(e) => {
+            const next = e.target.value || null
+            setMunicipality(next)
+            if (next && selected && selected.municipality !== next) setSelected(null)
+          }}
+          aria-label={t('municipality')}
+          className={`shrink-0 appearance-none rounded-full px-3 py-1.5 text-sm font-medium shadow ${
+            municipality ? 'bg-teal-600 text-white' : 'bg-white text-slate-700'
+          }`}
+        >
+          <option value="">📍 {t('allMunicipalities')}</option>
+          {municipalities.map((m) => (
+            <option key={m} value={m}>
+              📍 {m}
+            </option>
+          ))}
+        </select>
         <button
           type="button"
           onClick={() => setFilter(null)}
@@ -62,6 +113,12 @@ export default function MapPage() {
       {loading && (
         <div className="absolute inset-x-0 top-16 mx-auto w-fit rounded-full bg-white px-4 py-2 text-sm shadow">
           {t('loading')}
+        </div>
+      )}
+
+      {!loading && municipality && (
+        <div className="absolute inset-x-0 top-16 mx-auto w-fit rounded-full bg-white px-4 py-1.5 text-sm font-medium text-slate-600 shadow">
+          📍 {municipality} · {visible.length} {t('places')}
         </div>
       )}
 

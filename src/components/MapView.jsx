@@ -13,11 +13,12 @@ const MAX_BOUNDS = [
   [-64.2, 19.2],
 ]
 
-export default function MapView({ places, selectedId, onSelect }) {
+export default function MapView({ places, selectedId, onSelect, focusBounds }) {
   const containerRef = useRef(null)
   const mapRef = useRef(null)
   const markersRef = useRef(new Map())
   const onSelectRef = useRef(null)
+  const hadFocusRef = useRef(false)
 
   useEffect(() => {
     onSelectRef.current = onSelect
@@ -81,6 +82,20 @@ export default function MapView({ places, selectedId, onSelect }) {
       markers.set(place.id, marker)
     }
   }, [places])
+
+  // Zoom to the focused area (e.g. a municipality filter); zoom back out to
+  // the whole island when the focus is cleared.
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    if (focusBounds) {
+      hadFocusRef.current = true
+      map.fitBounds(focusBounds, { padding: 60, maxZoom: 12.5 })
+    } else if (hadFocusRef.current) {
+      hadFocusRef.current = false
+      map.fitBounds(PR_BOUNDS, { padding: 24 })
+    }
+  }, [focusBounds])
 
   // Fly to the selected place.
   useEffect(() => {
