@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import NavBar from './components/NavBar.jsx'
+import FeedbackButton from './components/FeedbackButton.jsx'
 import MapPage from './pages/MapPage.jsx'
 import PlaceDetailPage from './pages/PlaceDetailPage.jsx'
 import WishlistPage from './pages/WishlistPage.jsx'
@@ -7,6 +8,8 @@ import JournalPage from './pages/JournalPage.jsx'
 import JournalEntryPage from './pages/JournalEntryPage.jsx'
 import AuthPage from './pages/AuthPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
+import DashboardPage from './pages/DashboardPage.jsx'
+import AdminPage from './pages/AdminPage.jsx'
 import { useAuth } from './lib/AuthContext.jsx'
 import { useI18n } from './lib/i18n.jsx'
 
@@ -14,7 +17,7 @@ function RequireAuth({ children }) {
   const { user, loading } = useAuth()
   const { t } = useI18n()
   if (loading) return <div className="p-8 text-center text-slate-500">{t('loading')}</div>
-  if (!user) return <Navigate to="/auth" replace />
+  if (!user) return <Navigate to="/login" replace />
   return children
 }
 
@@ -25,7 +28,18 @@ export default function App() {
         <Routes>
           <Route path="/" element={<MapPage />} />
           <Route path="/place/:slug" element={<PlaceDetailPage />} />
-          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/login" element={<AuthPage mode="signin" />} />
+          <Route path="/signup" element={<AuthPage mode="signup" />} />
+          <Route path="/auth" element={<Navigate to="/login" replace />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <DashboardPage />
+              </RequireAuth>
+            }
+          />
           <Route
             path="/wishlist"
             element={
@@ -62,6 +76,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+      <FeedbackButton />
       <NavBar />
     </div>
   )

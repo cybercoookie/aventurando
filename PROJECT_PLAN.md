@@ -83,6 +83,18 @@ React 19 SPA (Vite, Tailwind 4, React Router)
       wishlist, journal with photo upload, ES/EN toggle, PWA manifest + service worker
 - [x] Netlify site `pr-adventures` with Supabase env vars configured
 
+### Phase 0.5 — Accounts, admin & sharing ✅
+- [x] Dedicated sign-up (`/signup`) and login (`/login`) pages
+- [x] Floating feedback/help button on every page → `feedback` table
+- [x] User dashboard (`/dashboard`): stats, visit history, wishlist
+- [x] Admin portal (`/admin`, gated by `profiles.is_admin`): places CRUD,
+      photo URL management (`place_photos`), feedback inbox
+- [x] Share places via native share sheet with WhatsApp/SMS/email/copy fallback
+- [x] Richer place details: photo gallery with lightbox, hours, fees, website,
+      bilingual tips (photos must be owned or openly licensed — scraping
+      Google Maps photos is not permitted by its terms; Google Places API is
+      a paid option for later)
+
 ### Phase 1 — MVP polish (1–2 weeks)
 - Verify/correct all place coordinates in the field or against official sources
   (seed coordinates are approximate)

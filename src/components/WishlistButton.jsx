@@ -9,7 +9,7 @@ export default function WishlistButton({ placeId, wishlist, className = '' }) {
   async function handleClick(e) {
     e.stopPropagation()
     if (!wishlist.signedIn) {
-      navigate('/auth')
+      navigate('/login')
       return
     }
     await wishlist.toggle(placeId)
