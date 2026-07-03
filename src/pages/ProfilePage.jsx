@@ -4,7 +4,7 @@ import { useAuth } from '../lib/AuthContext.jsx'
 import { useI18n } from '../lib/i18n.jsx'
 
 export default function ProfilePage() {
-  const { user } = useAuth()
+  const { user, isAdmin } = useAuth()
   const { t, lang, setLang } = useI18n()
   const navigate = useNavigate()
 
@@ -36,6 +36,26 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {user && (
+        <Link
+          to="/dashboard"
+          className="mt-4 flex items-center justify-between rounded-2xl bg-white p-4 font-semibold text-teal-700 shadow-sm"
+        >
+          <span>📊 {t('myDashboard')}</span>
+          <span className="text-slate-300">→</span>
+        </Link>
+      )}
+
+      {isAdmin && (
+        <Link
+          to="/admin"
+          className="mt-4 flex items-center justify-between rounded-2xl bg-white p-4 font-semibold text-teal-700 shadow-sm"
+        >
+          <span>🛠️ {t('adminPortal')}</span>
+          <span className="text-slate-300">→</span>
+        </Link>
+      )}
+
       <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
         {user ? (
           <>
@@ -52,12 +72,20 @@ export default function ProfilePage() {
             </button>
           </>
         ) : (
-          <Link
-            to="/auth"
-            className="block w-full rounded-xl bg-teal-600 py-2.5 text-center font-semibold text-white"
-          >
-            {t('signIn')}
-          </Link>
+          <div className="space-y-2">
+            <Link
+              to="/login"
+              className="block w-full rounded-xl bg-teal-600 py-2.5 text-center font-semibold text-white"
+            >
+              {t('signIn')}
+            </Link>
+            <Link
+              to="/signup"
+              className="block w-full rounded-xl bg-slate-100 py-2.5 text-center font-semibold text-slate-700"
+            >
+              {t('signUp')}
+            </Link>
+          </div>
         )}
       </div>
     </div>

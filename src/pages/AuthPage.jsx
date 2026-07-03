@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { useI18n } from '../lib/i18n.jsx'
 
-export default function AuthPage() {
+// Shared by the /login and /signup routes; `mode` decides which form shows.
+export default function AuthPage({ mode = 'signin' }) {
   const { t } = useI18n()
   const navigate = useNavigate()
-  const [mode, setMode] = useState('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null)
@@ -38,7 +38,9 @@ export default function AuthPage() {
       <div className="mt-8 text-center">
         <div className="text-5xl">🏝️</div>
         <h1 className="mt-2 text-2xl font-bold text-teal-700">PR Adventures</h1>
-        <p className="mt-2 text-sm text-slate-500">{t('signInPrompt')}</p>
+        <p className="mt-2 text-sm text-slate-500">
+          {mode === 'signup' ? t('signUpPrompt') : t('signInPrompt')}
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-3">
@@ -80,7 +82,7 @@ export default function AuthPage() {
 
       <button
         type="button"
-        onClick={() => setMode(mode === 'signup' ? 'signin' : 'signup')}
+        onClick={() => navigate(mode === 'signup' ? '/login' : '/signup')}
         className="mt-6 w-full text-center text-sm font-medium text-teal-600"
       >
         {mode === 'signup' ? t('haveAccount') : t('needAccount')}
